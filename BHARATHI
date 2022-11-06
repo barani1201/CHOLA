@@ -1,0 +1,48 @@
+// create an ajax request to localhost:5000
+$.ajax({
+    url: 'http://localhost:5000',
+    type: 'GET',
+    success: function(data) {
+      data.forEach(element => {
+        let str = `<div class="card1 border m-2">
+        <img class="card-img-top" src="${element.link}" alt="Card image" style="width:100%">
+        <div class="card-body">
+          <h4 class="card-title name">Gif By BB17G</h4>
+          <span><span class="count">0</span> Likes ❤️</span>
+        </div>
+      </div>`
+       $('.gifs').append(str);
+        });
+    }
+});
+PYTHON:
+from flask import Flask, jsonify,request
+from flask_cors import CORS
+import json
+import pymongo
+import urllib
+
+app = Flask(_name_)
+CORS(app)
+client = pymongo.MongoClient("mongodb+srv://instacluster:<password>@instacluster.iapeyji.mongodb.net/?retryWrites=true&w=majority")
+db = client.insta
+collection = db.gif
+
+
+@app.route("/")
+def hello_world():
+    cursor = collection.find({}, {"_id": 0})
+    documents = []
+    for document in cursor:
+        documents.append(document["data"])
+    return jsonify(documents)
+
+@app.route("/add")
+def add():
+    gif = urllib.parse.unquote(request.args.get("gif"))
+    collection.insert_one({"data": {"link": gif}})
+    return "success"
+
+
+
+app.run(debug=True)
